@@ -3,93 +3,363 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GeoAI y Detección de Cambios Urbanos</title>
+
+  <title>GeoAI para la detección de cambios urbanos</title>
 
   <style>
+    :root {
+      --azul-oscuro: #062b3f;
+      --azul: #118ab2;
+      --azul-claro: #e6f4ff;
+      --verde: #2a9d8f;
+      --verde-claro: #e8fff6;
+      --naranja: #f4a261;
+      --rojo: #e76f51;
+      --morado: #7b61ff;
+      --gris: #f5f7fa;
+      --texto: #1f2933;
+    }
+
+    * {
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+
     body {
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
-      background: #f4f7f9;
-      color: #222;
-      line-height: 1.6;
+      background: linear-gradient(180deg, #f7fbff 0%, #eef6fa 100%);
+      color: var(--texto);
+      line-height: 1.7;
     }
 
     header {
-      background: linear-gradient(135deg, #003366, #0b7fab);
+      min-height: 90vh;
+      background:
+        linear-gradient(rgba(6,43,63,0.86), rgba(6,43,63,0.92)),
+        radial-gradient(circle at top left, #00c2ff, transparent 30%),
+        radial-gradient(circle at bottom right, #2a9d8f, transparent 30%);
       color: white;
-      padding: 50px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       text-align: center;
+      padding: 60px 20px;
+      position: relative;
+      overflow: hidden;
     }
 
-    header h1 {
+    header::before {
+      content: "";
+      position: absolute;
+      width: 420px;
+      height: 420px;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 50%;
+      top: -120px;
+      right: -80px;
+    }
+
+    header::after {
+      content: "";
+      position: absolute;
+      width: 320px;
+      height: 320px;
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 50%;
+      bottom: -110px;
+      left: -70px;
+    }
+
+    .hero {
+      max-width: 1050px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 8px 16px;
+      border: 1px solid rgba(255,255,255,0.4);
+      border-radius: 999px;
+      color: #d9f7ff;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: clamp(38px, 6vw, 72px);
+      line-height: 1.08;
       margin: 0;
-      font-size: 38px;
     }
 
-    header p {
-      font-size: 18px;
-      margin-top: 15px;
+    .hero p {
+      max-width: 850px;
+      margin: 25px auto 0 auto;
+      font-size: 21px;
+      color: #e9f7ff;
+    }
+
+    .botones {
+      margin-top: 35px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .boton {
+      background: white;
+      color: var(--azul-oscuro);
+      text-decoration: none;
+      padding: 13px 22px;
+      border-radius: 999px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+
+    .boton:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    }
+
+    .boton.secundario {
+      background: transparent;
+      color: white;
+      border: 1px solid rgba(255,255,255,0.5);
     }
 
     nav {
-      background: #022b45;
-      padding: 12px;
-      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(6,43,63,0.96);
+      padding: 14px 20px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+    }
+
+    nav .menu {
+      max-width: 1200px;
+      margin: auto;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 18px;
     }
 
     nav a {
       color: white;
       text-decoration: none;
-      margin: 0 15px;
       font-weight: bold;
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    nav a:hover {
+      opacity: 1;
+      color: #9ee8ff;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: auto;
+      padding: 45px 20px;
     }
 
     section {
-      max-width: 1000px;
-      margin: 30px auto;
       background: white;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+      margin-bottom: 30px;
+      border-radius: 22px;
+      padding: 38px;
+      box-shadow: 0 10px 35px rgba(6,43,63,0.08);
+      border: 1px solid rgba(17,138,178,0.12);
     }
 
     h2 {
-      color: #003366;
-      border-left: 6px solid #0b7fab;
-      padding-left: 12px;
+      color: var(--azul-oscuro);
+      font-size: 32px;
+      margin-top: 0;
+      margin-bottom: 14px;
+      border-left: 7px solid var(--verde);
+      padding-left: 14px;
+    }
+
+    h3 {
+      color: var(--azul-oscuro);
+      margin-bottom: 8px;
+    }
+
+    .intro {
+      font-size: 18px;
+    }
+
+    .resaltado {
+      background: var(--azul-claro);
+      border-left: 6px solid var(--azul);
+      padding: 20px;
+      border-radius: 12px;
+      font-weight: bold;
+      color: var(--azul-oscuro);
+      margin-top: 20px;
     }
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 18px;
-      margin-top: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      margin-top: 25px;
     }
 
     .card {
-      background: #eef6fa;
-      padding: 18px;
-      border-radius: 10px;
-      border-left: 5px solid #0b7fab;
+      padding: 22px;
+      border-radius: 18px;
+      background: var(--gris);
+      border: 1px solid rgba(6,43,63,0.08);
+      transition: all 0.25s ease;
     }
 
-    .card h3 {
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 25px rgba(6,43,63,0.12);
+    }
+
+    .card .icono {
+      font-size: 34px;
+      margin-bottom: 8px;
+    }
+
+    .azul { background: #e6f4ff; border-left: 6px solid var(--azul); }
+    .verde { background: #e8fff6; border-left: 6px solid var(--verde); }
+    .naranja { background: #fff3d6; border-left: 6px solid var(--naranja); }
+    .rojo { background: #ffe8e8; border-left: 6px solid var(--rojo); }
+    .morado { background: #efe9ff; border-left: 6px solid var(--morado); }
+
+    .timeline {
+      position: relative;
+      margin-top: 25px;
+      padding-left: 20px;
+    }
+
+    .paso {
+      display: grid;
+      grid-template-columns: 70px 1fr;
+      gap: 18px;
+      margin-bottom: 24px;
+      align-items: start;
+    }
+
+    .numero {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: var(--azul-oscuro);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: bold;
+      box-shadow: 0 8px 20px rgba(6,43,63,0.25);
+    }
+
+    .contenido-paso {
+      background: var(--gris);
+      padding: 18px 22px;
+      border-radius: 16px;
+      border-left: 5px solid var(--verde);
+    }
+
+    .mindmap {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      margin-top: 25px;
+    }
+
+    .centro-mental {
+      background: linear-gradient(135deg, var(--azul-oscuro), var(--azul));
+      color: white;
+      text-align: center;
+      border-radius: 22px;
+      padding: 30px;
+      grid-column: 1 / -1;
+      font-size: 24px;
+      font-weight: bold;
+      box-shadow: 0 14px 32px rgba(6,43,63,0.22);
+    }
+
+    .rama {
+      border-radius: 18px;
+      padding: 20px;
+      min-height: 180px;
+    }
+
+    .rama ul {
+      padding-left: 20px;
+      margin-bottom: 0;
+    }
+
+    .afiche {
+      background: linear-gradient(135deg, #062b3f 0%, #118ab2 60%, #2a9d8f 100%);
+      color: white;
+      border-radius: 24px;
+      padding: 35px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 28px;
+      align-items: center;
+      margin-top: 25px;
+    }
+
+    .afiche h3 {
+      color: white;
+      font-size: 34px;
       margin-top: 0;
-      color: #003366;
+      line-height: 1.1;
+    }
+
+    .afiche-box {
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.24);
+      padding: 18px;
+      border-radius: 16px;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .referencias li {
+      margin-bottom: 10px;
     }
 
     footer {
-      background: #022b45;
+      background: var(--azul-oscuro);
       color: white;
       text-align: center;
-      padding: 20px;
-      margin-top: 40px;
+      padding: 30px 20px;
+      margin-top: 30px;
     }
 
-    img {
-      max-width: 100%;
-      border-radius: 10px;
-      margin-top: 15px;
+    @media (max-width: 800px) {
+      section {
+        padding: 25px;
+      }
+
+      .afiche {
+        grid-template-columns: 1fr;
+      }
+
+      .paso {
+        grid-template-columns: 1fr;
+      }
+
+      .numero {
+        margin-bottom: -8px;
+      }
     }
   </style>
 </head>
@@ -97,101 +367,373 @@
 <body>
 
   <header>
-    <h1>GeoAI para la detección de cambios urbanos</h1>
-    <p>Aplicación de inteligencia artificial geoespacial en imágenes satelitales, catastro y planeación territorial.</p>
+    <div class="hero">
+      <div class="tag">GeoAI | Inteligencia artificial geoespacial</div>
+      <h1>GeoAI para la detección de cambios urbanos</h1>
+      <p>
+        Una explicación enriquecida sobre cómo la inteligencia artificial, los sistemas de información geográfica
+        y las imágenes satelitales permiten analizar la transformación del territorio.
+      </p>
+
+      <div class="botones">
+        <a class="boton" href="#concepto">Ver concepto</a>
+        <a class="boton secundario" href="#proceso">Ver proceso</a>
+        <a class="boton secundario" href="#afiche">Ver afiche</a>
+      </div>
+    </div>
   </header>
 
   <nav>
-    <a href="#concepto">Concepto</a>
-    <a href="#funcionamiento">Funcionamiento</a>
-    <a href="#ejemplo">Ejemplo</a>
-    <a href="#aplicaciones">Aplicaciones</a>
-    <a href="#conclusion">Conclusión</a>
+    <div class="menu">
+      <a href="#concepto">Concepto</a>
+      <a href="#funcionamiento">Funcionamiento</a>
+      <a href="#proceso">Proceso</a>
+      <a href="#ejemplo">Ejemplo</a>
+      <a href="#aplicaciones">Aplicaciones</a>
+      <a href="#mapa">Mapa mental</a>
+      <a href="#afiche">Afiche</a>
+      <a href="#conclusion">Conclusión</a>
+    </div>
   </nav>
 
-  <section id="concepto">
-    <h2>¿Qué es la GeoAI?</h2>
-    <p>
-      La GeoAI, o inteligencia artificial geoespacial, consiste en aplicar técnicas de inteligencia artificial
-      a datos que tienen una ubicación en el espacio. Estos datos pueden ser imágenes satelitales, capas SIG,
-      información catastral, redes viales, modelos digitales del terreno o datos ambientales.
-    </p>
+  <main>
 
-    <p>
-      Su objetivo principal es reconocer patrones, clasificar elementos del territorio, detectar cambios y apoyar
-      la toma de decisiones espaciales. En este caso, se analiza su utilidad para identificar cambios urbanos
-      mediante imágenes satelitales.
-    </p>
-  </section>
+    <section id="concepto">
+      <h2>¿Qué es la GeoAI?</h2>
 
-  <section id="funcionamiento">
-    <h2>¿Cómo funciona?</h2>
-    <p>
-      El proceso inicia con la recolección de imágenes satelitales de diferentes fechas. Luego, estas imágenes
-      se preparan, se recorta el área de estudio y se seleccionan las variables que permiten diferenciar zonas
-      urbanas, vegetación, cuerpos de agua, vías o suelo descubierto.
-    </p>
+      <p class="intro">
+        La GeoAI, o inteligencia artificial geoespacial, consiste en aplicar técnicas de inteligencia artificial
+        a datos que tienen ubicación en el territorio. Estos datos pueden ser imágenes satelitales, fotografías
+        aéreas, capas SIG, información catastral, redes viales, modelos digitales del terreno o variables ambientales.
+      </p>
 
-    <p>
-      Después se entrena un modelo de inteligencia artificial con ejemplos de diferentes coberturas. El modelo
-      aprende a reconocer características como color, textura, forma, tamaño y relación espacial entre objetos.
-      Finalmente, se comparan los resultados de dos o más fechas para identificar dónde cambió el territorio.
-    </p>
-  </section>
+      <p>
+        Su principal valor está en reconocer patrones espaciales, clasificar elementos del territorio, detectar cambios
+        y apoyar la toma de decisiones. En este trabajo, la GeoAI se aplica a la detección de cambios urbanos mediante
+        imágenes satelitales de diferentes años.
+      </p>
 
-  <section id="ejemplo">
-    <h2>Ejemplo aplicado</h2>
-    <p>
-      Un municipio puede comparar imágenes satelitales de 2018 y 2025 para identificar nuevas construcciones,
-      expansión de vías, pérdida de vegetación o transformación de zonas rurales en urbanas.
-    </p>
-
-    <p>
-      Si una zona que antes aparecía como cobertura vegetal ahora se clasifica como área construida, el modelo
-      puede marcarla como un cambio urbano. Este resultado puede representarse en un mapa para apoyar procesos
-      de catastro, ordenamiento territorial y control urbano.
-    </p>
-  </section>
-
-  <section id="aplicaciones">
-    <h2>Aplicaciones principales</h2>
-
-    <div class="grid">
-      <div class="card">
-        <h3>Catastro multipropósito</h3>
-        <p>Permite identificar construcciones nuevas o cambios físicos que deberían actualizarse en la base catastral.</p>
+      <div class="resaltado">
+        Idea central: la GeoAI permite pasar de una revisión manual de imágenes a un análisis automatizado,
+        más rápido y útil para catastro, planeación urbana, gestión ambiental y ordenamiento territorial.
       </div>
+    </section>
 
-      <div class="card">
-        <h3>Planeación urbana</h3>
-        <p>Ayuda a verificar si el crecimiento urbano ocurre en zonas permitidas por los instrumentos de ordenamiento.</p>
+    <section id="funcionamiento">
+      <h2>¿Cómo funciona?</h2>
+
+      <p>
+        Para detectar cambios urbanos, la GeoAI compara información geográfica de diferentes fechas. Por ejemplo,
+        se puede analizar una imagen satelital de 2018 y otra de 2025. Luego, un modelo de inteligencia artificial
+        clasifica coberturas como zona construida, vegetación, agua, suelo descubierto y vías.
+      </p>
+
+      <p>
+        Después de la clasificación, los resultados se comparan. Si una zona que antes aparecía como vegetación
+        ahora aparece como área construida, el sistema puede marcarla como un cambio urbano. Este resultado se
+        representa en mapas y puede servir como insumo para análisis técnicos.
+      </p>
+
+      <div class="grid">
+        <div class="card azul">
+          <div class="icono">🛰️</div>
+          <h3>Imágenes satelitales</h3>
+          <p>Permiten observar el territorio en diferentes momentos y comparar su transformación.</p>
+        </div>
+
+        <div class="card verde">
+          <div class="icono">🧠</div>
+          <h3>Inteligencia artificial</h3>
+          <p>Reconoce patrones visuales y espaciales como forma, textura, color y distribución.</p>
+        </div>
+
+        <div class="card naranja">
+          <div class="icono">🗺️</div>
+          <h3>Información geográfica</h3>
+          <p>Integra capas SIG, predios, vías, límites urbanos y coberturas del suelo.</p>
+        </div>
+
+        <div class="card rojo">
+          <div class="icono">📊</div>
+          <h3>Resultados</h3>
+          <p>Genera mapas, estadísticas y zonas priorizadas para verificación o actualización.</p>
+        </div>
       </div>
+    </section>
 
-      <div class="card">
-        <h3>Gestión ambiental</h3>
-        <p>Facilita la detección de pérdida de vegetación, presión urbana sobre áreas protegidas o cambios en coberturas.</p>
+    <section id="proceso">
+      <h2>Proceso técnico</h2>
+
+      <div class="timeline">
+
+        <div class="paso">
+          <div class="numero">1</div>
+          <div class="contenido-paso">
+            <h3>Recolección de datos</h3>
+            <p>
+              Se seleccionan imágenes satelitales de diferentes fechas y capas geográficas del área de estudio.
+              También pueden usarse límites administrativos, predios, vías, manzanas y coberturas del suelo.
+            </p>
+          </div>
+        </div>
+
+        <div class="paso">
+          <div class="numero">2</div>
+          <div class="contenido-paso">
+            <h3>Preparación de la información</h3>
+            <p>
+              Se recortan las imágenes, se corrigen errores, se eliminan zonas con nubes y se organizan las
+              variables necesarias para el análisis espacial.
+            </p>
+          </div>
+        </div>
+
+        <div class="paso">
+          <div class="numero">3</div>
+          <div class="contenido-paso">
+            <h3>Entrenamiento del modelo</h3>
+            <p>
+              El modelo aprende a reconocer coberturas como zonas urbanas, vegetación, agua, suelo descubierto
+              y vías a partir de ejemplos previamente clasificados.
+            </p>
+          </div>
+        </div>
+
+        <div class="paso">
+          <div class="numero">4</div>
+          <div class="contenido-paso">
+            <h3>Clasificación de coberturas</h3>
+            <p>
+              La inteligencia artificial clasifica la imagen completa y genera un mapa temático con las diferentes
+              categorías del territorio.
+            </p>
+          </div>
+        </div>
+
+        <div class="paso">
+          <div class="numero">5</div>
+          <div class="contenido-paso">
+            <h3>Detección de cambios</h3>
+            <p>
+              Se comparan los mapas de diferentes años para identificar nuevas construcciones, expansión de vías,
+              pérdida de vegetación o cambios en el uso del suelo.
+            </p>
+          </div>
+        </div>
+
       </div>
+    </section>
 
-      <div class="card">
-        <h3>Gestión del riesgo</h3>
-        <p>Puede apoyar la identificación de asentamientos en zonas expuestas a inundación, remoción en masa u otras amenazas.</p>
+    <section id="ejemplo">
+      <h2>Ejemplo aplicado</h2>
+
+      <p>
+        Un municipio quiere saber en qué zonas ha crecido la urbanización entre 2018 y 2025. Para ello se toman
+        imágenes satelitales de ambos años, se clasifican las coberturas del suelo y se comparan los resultados.
+      </p>
+
+      <p>
+        Si una zona que antes era vegetación ahora aparece como construcción, el modelo la marca como cambio urbano.
+        Posteriormente, el profesional puede revisar el resultado con información catastral, cartografía oficial
+        o trabajo de campo.
+      </p>
+
+      <div class="resaltado">
+        Resultado esperado: un mapa de cambios urbanos que muestre dónde aumentó el área construida,
+        dónde se perdió vegetación y qué zonas requieren revisión técnica.
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section id="conclusion">
-    <h2>Conclusión</h2>
-    <p>
-      La GeoAI permite analizar grandes volúmenes de información espacial de manera más rápida y eficiente.
-      En la detección de cambios urbanos, ayuda a pasar de una revisión manual de imágenes a un análisis
-      automatizado que puede apoyar decisiones catastrales, urbanísticas, ambientales y económicas.
-    </p>
+    <section id="aplicaciones">
+      <h2>Aplicaciones principales</h2>
 
-    <p>
-      Esta tecnología no reemplaza al profesional en SIG, catastro o geodesia, sino que fortalece su capacidad
-      para interpretar el territorio con mayor precisión y oportunidad.
-    </p>
-  </section>
+      <div class="grid">
+        <div class="card azul">
+          <div class="icono">🏠</div>
+          <h3>Catastro multipropósito</h3>
+          <p>
+            Permite identificar construcciones nuevas, ampliaciones o cambios físicos que deberían ser revisados
+            en la base catastral.
+          </p>
+        </div>
+
+        <div class="card verde">
+          <div class="icono">🏙️</div>
+          <h3>Planeación urbana</h3>
+          <p>
+            Ayuda a verificar si el crecimiento urbano ocurre en zonas permitidas por los instrumentos
+            de ordenamiento territorial.
+          </p>
+        </div>
+
+        <div class="card naranja">
+          <div class="icono">🌿</div>
+          <h3>Gestión ambiental</h3>
+          <p>
+            Facilita la detección de pérdida de vegetación, presión urbana sobre áreas protegidas o cambios
+            en coberturas naturales.
+          </p>
+        </div>
+
+        <div class="card rojo">
+          <div class="icono">⚠️</div>
+          <h3>Gestión del riesgo</h3>
+          <p>
+            Puede apoyar la identificación de asentamientos en zonas de amenaza por inundación, remoción en masa
+            u otros fenómenos.
+          </p>
+        </div>
+
+        <div class="card morado">
+          <div class="icono">💰</div>
+          <h3>Avalúos y valor del suelo</h3>
+          <p>
+            Los cambios urbanos pueden modificar la dinámica inmobiliaria, la accesibilidad y el valor comercial
+            del suelo.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="mapa">
+      <h2>Mapa mental del concepto</h2>
+
+      <div class="mindmap">
+
+        <div class="centro-mental">
+          🌎 GeoAI para la detección de cambios urbanos
+        </div>
+
+        <div class="rama azul">
+          <h3>🧠 Concepto</h3>
+          <ul>
+            <li>Inteligencia artificial</li>
+            <li>Datos geoespaciales</li>
+            <li>Análisis territorial</li>
+            <li>Reconocimiento de patrones</li>
+          </ul>
+        </div>
+
+        <div class="rama verde">
+          <h3>🛰️ Datos usados</h3>
+          <ul>
+            <li>Imágenes satelitales</li>
+            <li>Capas SIG</li>
+            <li>Información catastral</li>
+            <li>Vías y coberturas</li>
+          </ul>
+        </div>
+
+        <div class="rama naranja">
+          <h3>⚙️ Proceso</h3>
+          <ul>
+            <li>Recolección</li>
+            <li>Preparación</li>
+            <li>Entrenamiento</li>
+            <li>Clasificación</li>
+            <li>Comparación temporal</li>
+          </ul>
+        </div>
+
+        <div class="rama rojo">
+          <h3>📍 Resultados</h3>
+          <ul>
+            <li>Nuevas construcciones</li>
+            <li>Expansión de vías</li>
+            <li>Pérdida de vegetación</li>
+            <li>Cambio de uso del suelo</li>
+          </ul>
+        </div>
+
+        <div class="rama morado">
+          <h3>🏙️ Aplicaciones</h3>
+          <ul>
+            <li>Catastro</li>
+            <li>Planeación urbana</li>
+            <li>Gestión ambiental</li>
+            <li>Gestión del riesgo</li>
+            <li>Avalúos</li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="afiche">
+      <h2>Afiche explicativo</h2>
+
+      <p>
+        Este bloque resume el contenido que puede usarse como base para un afiche académico. Puede copiarse en Canva,
+        Adobe Express, PowerPoint o cualquier herramienta de diseño.
+      </p>
+
+      <div class="afiche">
+        <div>
+          <h3>GeoAI para detectar cambios urbanos</h3>
+          <p>
+            La GeoAI combina inteligencia artificial, imágenes satelitales y datos geográficos para analizar cómo cambia
+            el territorio a través del tiempo.
+          </p>
+
+          <div class="afiche-box">
+            <strong>Idea clave:</strong> permite identificar nuevas construcciones, pérdida de vegetación,
+            expansión de vías y transformación del uso del suelo.
+          </div>
+        </div>
+
+        <div class="mini-grid">
+          <div class="afiche-box">
+            <strong>🛰️ Datos</strong>
+            <p>Imágenes satelitales y capas SIG.</p>
+          </div>
+
+          <div class="afiche-box">
+            <strong>🧠 IA</strong>
+            <p>Reconoce patrones espaciales.</p>
+          </div>
+
+          <div class="afiche-box">
+            <strong>🗺️ Mapas</strong>
+            <p>Representa zonas de cambio.</p>
+          </div>
+
+          <div class="afiche-box">
+            <strong>🏙️ Uso</strong>
+            <p>Catastro y planeación urbana.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="conclusion">
+      <h2>Conclusión</h2>
+
+      <p>
+        La GeoAI permite analizar grandes volúmenes de información espacial de manera más rápida, organizada y útil
+        para la toma de decisiones. En la detección de cambios urbanos, ayuda a identificar transformaciones físicas
+        del territorio que pueden ser relevantes para el catastro, la planeación urbana, la gestión ambiental y los
+        estudios del valor del suelo.
+      </p>
+
+      <p>
+        Sin embargo, los resultados generados por inteligencia artificial deben ser interpretados con criterio técnico.
+        Un cambio detectado en una imagen no siempre significa automáticamente un cambio jurídico, normativo o catastral.
+        Por eso, la GeoAI debe entenderse como una herramienta de apoyo, no como un reemplazo del análisis profesional.
+      </p>
+    </section>
+
+    <section id="referencias">
+      <h2>Referencias</h2>
+
+      <ul class="referencias">
+        <li>Esri. GeoAI: Artificial Intelligence for Geospatial Data.</li>
+        <li>NASA Earthdata. Artificial Intelligence and Earth Observation Data.</li>
+        <li>Google Developers. Google Earth Engine Guides.</li>
+        <li>Goodchild, M. F. Citizens as sensors: the world of volunteered geography.</li>
+      </ul>
+    </section>
+
+  </main>
 
   <footer>
     <p>Trabajo académico sobre GeoAI | Detección de cambios urbanos con imágenes satelitales</p>
