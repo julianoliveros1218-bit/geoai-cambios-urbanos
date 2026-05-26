@@ -1,1 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GeoAI y Detección de Cambios Urbanos</title>
 
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f7f9;
+      color: #222;
+      line-height: 1.6;
+    }
+
+    header {
+      background: linear-gradient(135deg, #003366, #0b7fab);
+      color: white;
+      padding: 50px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 38px;
+    }
+
+    header p {
+      font-size: 18px;
+      margin-top: 15px;
+    }
+
+    nav {
+      background: #022b45;
+      padding: 12px;
+      text-align: center;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 15px;
+      font-weight: bold;
+    }
+
+    section {
+      max-width: 1000px;
+      margin: 30px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+    }
+
+    h2 {
+      color: #003366;
+      border-left: 6px solid #0b7fab;
+      padding-left: 12px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    .card {
+      background: #eef6fa;
+      padding: 18px;
+      border-radius: 10px;
+      border-left: 5px solid #0b7fab;
+    }
+
+    .card h3 {
+      margin-top: 0;
+      color: #003366;
+    }
+
+    footer {
+      background: #022b45;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+    }
+
+    img {
+      max-width: 100%;
+      border-radius: 10px;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>GeoAI para la detección de cambios urbanos</h1>
+    <p>Aplicación de inteligencia artificial geoespacial en imágenes satelitales, catastro y planeación territorial.</p>
+  </header>
+
+  <nav>
+    <a href="#concepto">Concepto</a>
+    <a href="#funcionamiento">Funcionamiento</a>
+    <a href="#ejemplo">Ejemplo</a>
+    <a href="#aplicaciones">Aplicaciones</a>
+    <a href="#conclusion">Conclusión</a>
+  </nav>
+
+  <section id="concepto">
+    <h2>¿Qué es la GeoAI?</h2>
+    <p>
+      La GeoAI, o inteligencia artificial geoespacial, consiste en aplicar técnicas de inteligencia artificial
+      a datos que tienen una ubicación en el espacio. Estos datos pueden ser imágenes satelitales, capas SIG,
+      información catastral, redes viales, modelos digitales del terreno o datos ambientales.
+    </p>
+
+    <p>
+      Su objetivo principal es reconocer patrones, clasificar elementos del territorio, detectar cambios y apoyar
+      la toma de decisiones espaciales. En este caso, se analiza su utilidad para identificar cambios urbanos
+      mediante imágenes satelitales.
+    </p>
+  </section>
+
+  <section id="funcionamiento">
+    <h2>¿Cómo funciona?</h2>
+    <p>
+      El proceso inicia con la recolección de imágenes satelitales de diferentes fechas. Luego, estas imágenes
+      se preparan, se recorta el área de estudio y se seleccionan las variables que permiten diferenciar zonas
+      urbanas, vegetación, cuerpos de agua, vías o suelo descubierto.
+    </p>
+
+    <p>
+      Después se entrena un modelo de inteligencia artificial con ejemplos de diferentes coberturas. El modelo
+      aprende a reconocer características como color, textura, forma, tamaño y relación espacial entre objetos.
+      Finalmente, se comparan los resultados de dos o más fechas para identificar dónde cambió el territorio.
+    </p>
+  </section>
+
+  <section id="ejemplo">
+    <h2>Ejemplo aplicado</h2>
+    <p>
+      Un municipio puede comparar imágenes satelitales de 2018 y 2025 para identificar nuevas construcciones,
+      expansión de vías, pérdida de vegetación o transformación de zonas rurales en urbanas.
+    </p>
+
+    <p>
+      Si una zona que antes aparecía como cobertura vegetal ahora se clasifica como área construida, el modelo
+      puede marcarla como un cambio urbano. Este resultado puede representarse en un mapa para apoyar procesos
+      de catastro, ordenamiento territorial y control urbano.
+    </p>
+  </section>
+
+  <section id="aplicaciones">
+    <h2>Aplicaciones principales</h2>
+
+    <div class="grid">
+      <div class="card">
+        <h3>Catastro multipropósito</h3>
+        <p>Permite identificar construcciones nuevas o cambios físicos que deberían actualizarse en la base catastral.</p>
+      </div>
+
+      <div class="card">
+        <h3>Planeación urbana</h3>
+        <p>Ayuda a verificar si el crecimiento urbano ocurre en zonas permitidas por los instrumentos de ordenamiento.</p>
+      </div>
+
+      <div class="card">
+        <h3>Gestión ambiental</h3>
+        <p>Facilita la detección de pérdida de vegetación, presión urbana sobre áreas protegidas o cambios en coberturas.</p>
+      </div>
+
+      <div class="card">
+        <h3>Gestión del riesgo</h3>
+        <p>Puede apoyar la identificación de asentamientos en zonas expuestas a inundación, remoción en masa u otras amenazas.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="conclusion">
+    <h2>Conclusión</h2>
+    <p>
+      La GeoAI permite analizar grandes volúmenes de información espacial de manera más rápida y eficiente.
+      En la detección de cambios urbanos, ayuda a pasar de una revisión manual de imágenes a un análisis
+      automatizado que puede apoyar decisiones catastrales, urbanísticas, ambientales y económicas.
+    </p>
+
+    <p>
+      Esta tecnología no reemplaza al profesional en SIG, catastro o geodesia, sino que fortalece su capacidad
+      para interpretar el territorio con mayor precisión y oportunidad.
+    </p>
+  </section>
+
+  <footer>
+    <p>Trabajo académico sobre GeoAI | Detección de cambios urbanos con imágenes satelitales</p>
+  </footer>
+
+</body>
+</html>
