@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GeoAI para la detección de cambios urbanos</title>
+
+  <style>
+    :root{
+      --fondo:#f4f1e8;
+      --papel:#fffdf7;
+      --tinta:#183238;
+      --verde:#0f4850;
+      --cian:#24c7c7;
+      --magenta:#b43895;
+      --naranja:#b45f2a;
+      --gris:#e6e2d8;
+      --sombra:0 18px 45px rgba(18,40,45,.16);
+    }
+
+    *{box-sizing:border-box;scroll-behavior:smooth}
+
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      color:var(--tinta);
+      line-height:1.65;
+      background:
+        radial-gradient(circle at 8% 12%, rgba(36,199,199,.12), transparent 28%),
+        radial-gradient(circle at 88% 18%, rgba(180,56,149,.10), transparent 27%),
+        linear-gradient(180deg,#fbfaf4 0%,var(--fondo) 100%);
+    }
+
+    header{
+      min-height:92vh;
+      display:grid;
+      place-items:center;
+      padding:70px 22px;
+      background:
+        linear-gradient(90deg, rgba(15,72,80,.94), rgba(15,72,80,.72)),
+        url('assets/afiche-geoai.png') center/cover no-repeat;
+      color:white;
+      position:relative;
+      overflow:hidden;
+    }
+
+    header::after{
+      content:"";
+      position:absolute;
+      inset:22px;
+      border:1px solid rgba(255,255,255,.22);
+      pointer-events:none;
+    }
+
+    .hero{
+      position:relative;
+      z-index:2;
+      max-width:1050px;
+      width:100%;
+    }
+
+    .etiqueta{
+      display:inline-block;
+      padding:8px 16px;
+      border:1px solid rgba(255,255,255,.5);
+      border-radius:999px;
+      color:#dffbfb;
+      font-weight:700;
+      letter-spacing:.5px;
+      margin-bottom:20px;
+      background:rgba(255,255,255,.08);
+      backdrop-filter:blur(4px);
+    }
+
+    h1{
+      font-size:clamp(40px,7vw,82px);
+      line-height:1.04;
+      margin:0;
+      max-width:950px;
+      letter-spacing:.5px;
+    }
+
+    .hero p{
+      max-width:780px;
+      font-size:21px;
+      margin:24px 0 0;
+      color:#eefafa;
+    }
+
+    .botones{
+      margin-top:34px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:14px;
+    }
+
+    .btn{
+      display:inline-block;
+      padding:13px 22px;
+      border-radius:999px;
+      text-decoration:none;
+      font-weight:800;
+      border:1px solid transparent;
+      transition:.25s ease;
+    }
+
+    .btn.principal{background:white;color:var(--verde)}
+    .btn.secundario{background:rgba(255,255,255,.08);color:white;border-color:rgba(255,255,255,.45)}
+    .btn:hover{transform:translateY(-3px);box-shadow:0 12px 25px rgba(0,0,0,.25)}
+
+    nav{
+      position:sticky;
+      top:0;
+      z-index:10;
+      background:rgba(15,72,80,.96);
+      backdrop-filter:blur(10px);
+      padding:13px 16px;
+      box-shadow:0 8px 25px rgba(0,0,0,.15);
+    }
+
+    nav div{
+      max-width:1180px;
+      margin:auto;
+      display:flex;
+      justify-content:center;
+      flex-wrap:wrap;
+      gap:18px;
+    }
+
+    nav a{
+      color:white;
+      text-decoration:none;
+      font-size:14px;
+      font-weight:800;
+      opacity:.9;
+    }
+
+    nav a:hover{opacity:1;color:#bff7f7}
+
+    main{
+      max-width:1180px;
+      margin:auto;
+      padding:46px 20px;
+    }
+
+    section{
+      background:rgba(255,253,247,.94);
+      border:1px solid rgba(15,72,80,.13);
+      box-shadow:var(--sombra);
+      border-radius:26px;
+      margin-bottom:30px;
+      padding:38px;
+      overflow:hidden;
+    }
+
+    h2{
+      margin:0 0 18px;
+      font-size:clamp(28px,4vw,42px);
+      line-height:1.1;
+      color:var(--verde);
+    }
+
+    h3{color:var(--verde);margin:0 0 10px;font-size:22px}
+
+    .lead{font-size:18px;max-width:940px}
+
+    .resaltado{
+      margin-top:20px;
+      padding:20px 22px;
+      border-left:7px solid var(--magenta);
+      background:linear-gradient(90deg, rgba(180,56,149,.12), rgba(36,199,199,.08));
+      border-radius:16px;
+      font-weight:700;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+      gap:18px;
+      margin-top:24px;
+    }
+
+    .card{
+      background:#fff;
+      border:1px solid rgba(15,72,80,.13);
+      border-radius:20px;
+      padding:22px;
+      box-shadow:0 10px 25px rgba(18,40,45,.08);
+    }
+
+    .card .icono{font-size:34px;margin-bottom:8px}
+    .card.magenta{border-top:6px solid var(--magenta)}
+    .card.cian{border-top:6px solid var(--cian)}
+    .card.naranja{border-top:6px solid var(--naranja)}
+    .card.verde{border-top:6px solid var(--verde)}
+
+    .visual-doble{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:26px;
+      align-items:start;
+      margin-top:26px;
+    }
+
+    .visual-card{
+      background:white;
+      border-radius:24px;
+      padding:18px;
+      border:1px solid rgba(15,72,80,.15);
+      box-shadow:0 12px 30px rgba(18,40,45,.10);
+    }
+
+    .visual-card img{
+      width:100%;
+      height:auto;
+      display:block;
+      border-radius:16px;
+      border:1px solid rgba(15,72,80,.12);
+    }
+
+    .caption{
+      font-size:14px;
+      color:#536369;
+      margin:12px 4px 0;
+    }
+
+    .wide-img{
+      margin-top:24px;
+      background:white;
+      border-radius:24px;
+      padding:18px;
+      border:1px solid rgba(15,72,80,.15);
+      box-shadow:0 12px 30px rgba(18,40,45,.10);
+    }
+
+    .wide-img img{
+      width:100%;
+      display:block;
+      border-radius:16px;
+      border:1px solid rgba(15,72,80,.12);
+    }
+
+    .proceso{
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      gap:14px;
+      margin-top:26px;
+    }
+
+    .paso{
+      min-height:150px;
+      background:white;
+      border-radius:20px;
+      padding:18px;
+      border:1px solid rgba(15,72,80,.16);
+      position:relative;
+    }
+
+    .paso span{
+      display:grid;
+      place-items:center;
+      width:38px;
+      height:38px;
+      border-radius:50%;
+      background:var(--verde);
+      color:white;
+      font-weight:900;
+      margin-bottom:12px;
+    }
+
+    .descargas{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+      gap:18px;
+      margin-top:24px;
+    }
+
+    .download-card{
+      background:#fff;
+      border-radius:22px;
+      padding:22px;
+      border:1px solid rgba(15,72,80,.16);
+      box-shadow:0 10px 24px rgba(18,40,45,.08);
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      min-height:210px;
+    }
+
+    .download-card strong{
+      display:block;
+      font-size:20px;
+      color:var(--verde);
+      margin-bottom:8px;
+    }
+
+    .download-card p{margin:0 0 18px;color:#47565a}
+
+    .download-card a{
+      display:inline-block;
+      text-decoration:none;
+      background:var(--verde);
+      color:white;
+      padding:11px 16px;
+      border-radius:999px;
+      font-weight:900;
+      text-align:center;
+    }
+
+    .download-card a:hover{background:#0a343a}
+
+    .download-card.full{
+      background:linear-gradient(135deg,var(--verde),#132f36);
+      color:white;
+      border:none;
+    }
+
+    .download-card.full strong,
+    .download-card.full p{color:white}
+    .download-card.full a{background:white;color:var(--verde)}
+
+    .referencias{
+      padding-left:20px;
+    }
+
+    .referencias li{margin-bottom:10px}
+
+    footer{
+      background:var(--verde);
+      color:white;
+      text-align:center;
+      padding:30px 20px;
+      margin-top:20px;
+    }
+
+    @media(max-width:850px){
+      section{padding:25px}
+      .visual-doble{grid-template-columns:1fr}
+      .proceso{grid-template-columns:1fr}
+      header{min-height:78vh}
+    }
+  </style>
+</head>
+
+<body>
+  <header id="inicio">
+    <div class="hero">
+      <div class="etiqueta">GeoAI · Sensores remotos · SIG · Catastro</div>
+      <h1>GeoAI para la detección de cambios urbanos</h1>
+      <p>
+        Aplicación de inteligencia artificial geoespacial e imágenes satelitales para analizar la transformación del territorio.
+      </p>
+      <div class="botones">
+        <a href="#productos" class="btn principal">Ver productos</a>
+        <a href="#descargas" class="btn secundario">Descargar archivos</a>
+        <a href="#proceso" class="btn secundario">Ver metodología</a>
+      </div>
+    </div>
+  </header>
+
+  <nav>
+    <div>
+      <a href="#concepto">Concepto</a>
+      <a href="#datos">Datos</a>
+      <a href="#proceso">Proceso</a>
+      <a href="#productos">Afiche y mapa</a>
+      <a href="#aplicaciones">Aplicaciones</a>
+      <a href="#descargas">Descargas</a>
+      <a href="#referencias">Referencias</a>
+    </div>
+  </nav>
+
+  <main>
+    <section id="concepto">
+      <h2>¿Qué es la GeoAI?</h2>
+      <p class="lead">
+        La GeoAI, o inteligencia artificial geoespacial, integra algoritmos de inteligencia artificial con datos que tienen ubicación. No analiza solamente el “qué” aparece en una imagen o capa geográfica, sino también el “dónde”, la distancia, la vecindad, la forma y la relación espacial entre los objetos.
+      </p>
+      <div class="resaltado">
+        En este tema, la GeoAI se usa para comparar imágenes satelitales de distintos años y detectar cambios urbanos como nuevas construcciones, expansión vial, pérdida de vegetación e impermeabilización del suelo.
+      </div>
+    </section>
+
+    <section id="datos">
+      <h2>Datos utilizados</h2>
+      <p>
+        El análisis se apoya en imágenes satelitales multitemporales, capas SIG, límites administrativos, red vial e información catastral. Estos insumos permiten pasar de una observación visual aislada a una lectura territorial más completa.
+      </p>
+      <div class="grid">
+        <div class="card cian"><div class="icono">🛰️</div><h3>Imágenes satelitales</h3><p>Comparación temporal, por ejemplo 2018 frente a 2025.</p></div>
+        <div class="card magenta"><div class="icono">🗺️</div><h3>Capas SIG</h3><p>Vías, límites, coberturas, polígonos prediales y zonas urbanas.</p></div>
+        <div class="card naranja"><div class="icono">🏠</div><h3>Catastro</h3><p>Información predial y cambios físicos que requieren revisión técnica.</p></div>
+        <div class="card verde"><div class="icono">🌿</div><h3>Coberturas</h3><p>Vegetación, suelo descubierto, cuerpos de agua y áreas construidas.</p></div>
+      </div>
+    </section>
+
+    <section id="proceso">
+      <h2>Motor metodológico</h2>
+      <p>
+        El flujo de trabajo resume cómo la información se transforma en un resultado territorial interpretable. La inteligencia artificial identifica patrones, pero la validación profesional sigue siendo necesaria.
+      </p>
+      <div class="proceso">
+        <div class="paso"><span>1</span><h3>Recolectar</h3><p>Imágenes, capas SIG y datos catastrales.</p></div>
+        <div class="paso"><span>2</span><h3>Preparar</h3><p>Corrección, recorte, limpieza y ajuste espacial.</p></div>
+        <div class="paso"><span>3</span><h3>Entrenar</h3><p>Ejemplos de coberturas urbanas, vegetación, agua y vías.</p></div>
+        <div class="paso"><span>4</span><h3>Clasificar</h3><p>Generación de mapas temáticos de cobertura.</p></div>
+        <div class="paso"><span>5</span><h3>Comparar</h3><p>Detección de zonas donde ocurrió cambio urbano.</p></div>
+      </div>
+    </section>
+
+    <section id="productos">
+      <h2>Productos visuales del trabajo</h2>
+      <p>
+        En lugar de dejar el afiche y el mapa mental como bloques genéricos, aquí se integran directamente los productos elaborados para la entrega.
+      </p>
+
+      <div class="visual-doble">
+        <div class="visual-card">
+          <img src="assets/afiche-geoai.png" alt="Afiche académico sobre GeoAI para detección de cambios urbanos" />
+          <p class="caption"><strong>Afiche.</strong> Síntesis visual del concepto, funcionamiento, datos, cambios detectables, aplicaciones e idea clave.</p>
+        </div>
+
+        <div class="visual-card">
+          <img src="assets/mapa-mental-geoai.png" alt="Mapa mental sobre GeoAI y cambios urbanos" />
+          <p class="caption"><strong>Mapa mental.</strong> Organización conceptual del tema en ramas: concepto, datos, proceso, resultados, aplicaciones e importancia.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="aplicaciones">
+      <h2>Aplicaciones territoriales</h2>
+      <div class="grid">
+        <div class="card magenta"><h3>Catastro</h3><p>Identificación de nuevas construcciones, ampliaciones y posibles cambios físicos prediales.</p></div>
+        <div class="card cian"><h3>Planeación urbana</h3><p>Monitoreo del crecimiento urbano y detección de expansión informal.</p></div>
+        <div class="card verde"><h3>Gestión ambiental</h3><p>Seguimiento de pérdida de vegetación, presión sobre ecosistemas e impermeabilización.</p></div>
+        <div class="card naranja"><h3>Riesgo y avalúos</h3><p>Apoyo para identificar asentamientos expuestos y dinámicas que afectan el valor del suelo.</p></div>
+      </div>
+      <div class="resaltado">
+        Idea clave: la IA propone, pero el profesional dispone. El cambio físico detectado por un algoritmo no equivale automáticamente a un cambio jurídico, normativo o catastral.
+      </div>
+    </section>
+
+    <section id="descargas">
+      <h2>Descargar productos</h2>
+      <p>
+        Desde este apartado se pueden descargar todos los archivos de la entrega: afiche, mapa mental, presentación, documento y paquete completo.
+      </p>
+
+      <div class="descargas">
+        <div class="download-card full">
+          <strong>Paquete completo</strong>
+          <p>Incluye afiche, mapa mental, presentación en PPTX, presentación en PDF y documento PDF.</p>
+          <a href="assets/paquete-completo-geoai.zip" download>Descargar todo</a>
+        </div>
+
+        <div class="download-card">
+          <strong>Afiche PNG</strong>
+          <p>Versión visual del afiche académico.</p>
+          <a href="assets/afiche-geoai.png" download>Descargar afiche</a>
+        </div>
+
+        <div class="download-card">
+          <strong>Mapa mental PNG</strong>
+          <p>Mapa mental del concepto GeoAI y cambios urbanos.</p>
+          <a href="assets/mapa-mental-geoai.png" download>Descargar mapa</a>
+        </div>
+
+        <div class="download-card">
+          <strong>Presentación PPTX</strong>
+          <p>Archivo editable para sustentar el tema.</p>
+          <a href="assets/presentacion-geoai.pptx" download>Descargar PPTX</a>
+        </div>
+
+        <div class="download-card">
+          <strong>Presentación PDF</strong>
+          <p>Versión final de la presentación en PDF.</p>
+          <a href="assets/presentacion-geoai.pdf" download>Descargar PDF</a>
+        </div>
+
+        <div class="download-card">
+          <strong>Documento PDF</strong>
+          <p>Documento académico detallado del tema.</p>
+          <a href="assets/documento-geoai.pdf" download>Descargar documento</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="referencias">
+      <h2>Referencias bibliográficas</h2>
+      <ul class="referencias">
+        <li>Esri. GeoAI: Artificial Intelligence for Geospatial Data.</li>
+        <li>NASA Earthdata. Artificial Intelligence and Earth Observation Data.</li>
+        <li>Google Developers. Google Earth Engine Guides.</li>
+        <li>Goodchild, M. F. (2007). Citizens as sensors: the world of volunteered geography. <em>GeoJournal</em>, 69, 211–221.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <p>GeoAI para la detección de cambios urbanos · Trabajo académico · Inteligencia Artificial Aplicada al Territorio</p>
+  </footer>
+</body>
+</html>
